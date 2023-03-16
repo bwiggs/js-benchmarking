@@ -1,0 +1,40 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/benchmark/2.1.4/benchmark.min.js" integrity="sha512-xQc9DgKsysVXOYCdYCygJIizr64rtYYmNcOv4iKCBJw/xvuiaeG7FIwrkXuCgJg4U7oTqqNpknbC6eyc0NSREg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+var suite = new Benchmark.Suite('flatten');
+import { network } from './flatten/testdata/network.js'
+import {
+  flatten_iteration,
+  flatten_recursion,
+  flatten_recursion_push,
+  flatten_recursion_foreach,
+  flatten_recursion_concat
+} from "./flatten/flatten.js";
+// add tests
+suite
+  .add('iteration', function () {
+    flatten_iteration(network)
+  })
+  .add('recursion', function () {
+    flatten_recursion(network)
+  })
+  .add('recursion (push spread)', function () {
+    flatten_recursion_push(network)
+  })
+  .add('recursion (push spread foreach)', function () {
+    flatten_recursion_foreach(network)
+  })
+  .add('recursion (concat)', function () {
+    flatten_recursion_concat(network)
+  })
+  // add listeners
+  .on('cycle', function (event) {
+    console.log(String(event.target));
+  })
+  .on('complete', function () {
+    console.log('Fastest is ' + this.filter('fastest').map('name'));
+  })
+  // run async
+  .run({ 'async': true, });
+</script>
